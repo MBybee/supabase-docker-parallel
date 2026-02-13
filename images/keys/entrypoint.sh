@@ -57,7 +57,7 @@ logflare_private_access_token=$(gen_base64 24)
 postgres_password=$(gen_hex 16)
 dashboard_password=$(gen_hex 16)
 
-db_enc_key=$(gen_hex 16)
+db_enc_key=$(gen_hex 8)
 
 pooler_id=$(gen_hex 8)
 

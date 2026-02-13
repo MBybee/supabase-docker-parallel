@@ -57,6 +57,10 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-realtime:2.72.0
     container_name: realtime-dev.supabase-realtime
+    ulimits:
+      nofile:
+        soft: 10000
+        hard: 10000
     depends_on:
       db:
         condition: service_healthy
