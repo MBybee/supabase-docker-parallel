@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-set -Eeuo pipefail
+#!/bin/sh
+set -e
 
 export PGRST_DB_URI="${PGRST_DB_URI:-postgres://authenticator:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}}"
 export PGRST_JWT_SECRET="${PGRST_JWT_SECRET:-$JWT_SECRET}"

@@ -89,6 +89,11 @@ If a specific service fail, run only this service (eg. vector):
 ./build.sh vector --test
 ```
 
+### Optimizations
+
+- Merge some images in just one
+- Maybe build an AIO image
+
 ## Contribution
 
 If this project was useful, consider donation and give a star.
