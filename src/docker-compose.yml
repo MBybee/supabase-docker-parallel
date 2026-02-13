@@ -1,22 +1,25 @@
-services:
+name: supabase
 
+x-common: &common
+  networks: [ supabase-internal ]
+  env_file: .env
+  restart: unless-stopped
+services:
   studio:
+    <<: *common
     image: ghcr.io/webysther/supabase-studio:2026.01.27
     container_name: supabase-studio
-    restart: unless-stopped
-    networks:
-      - supabase-internal
     depends_on:
       analytics:
         condition: service_healthy
     volumes:
-      - /data/docker/supabase/snippets:/app/snippets
-      - /data/docker/supabase/functions:/app/edge-functions
+      - snippets:/app/snippets
+      - functions:/app/edge-functions
 
   kong:
+    <<: *common
     image: ghcr.io/webysther/supabase-kong:2:8
     container_name: supabase-kong
-    restart: unless-stopped
     networks:
       - supabase
       - supabase-internal
@@ -27,11 +30,9 @@ services:
         condition: service_healthy
 
   auth:
-    container_name: supabase-auth
+    <<: *common
     image: supabase/gotrue:v2.185.0
-    restart: unless-stopped
-    networks:
-      - supabase-internal
+    container_name: supabase-auth
     depends_on:
       db:
         condition: service_healthy
@@ -39,11 +40,9 @@ services:
         condition: service_healthy
 
   rest:
+    <<: *common
     image: ghcr.io/webysther/supabase-rest:14.3
     container_name: supabase-rest
-    restart: unless-stopped
-    networks:
-      - supabase-internal
     depends_on:
       db:
         condition: service_healthy
@@ -51,25 +50,21 @@ services:
         condition: service_healthy
 
   realtime:
+    <<: *common
     image: ghcr.io/webysther/supabase-realtime:2.72.0
     container_name: realtime-dev.supabase-realtime
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
       analytics:
         condition: service_healthy
-    networks:
-      - supabase-internal
 
   storage:
+    <<: *common
     image: ghcr.io/webysther/supabase-storage:1.37.1
     container_name: supabase-storage
-    restart: unless-stopped
     volumes:
-      - /data/docker/supabase/storage:/var/lib/storage:z
-    networks:
-      - supabase-internal
+      - storage:/var/lib/storage
     depends_on:
       db:
         condition: service_healthy
@@ -79,89 +74,67 @@ services:
         condition: service_started
 
   imgproxy:
+    <<: *common
     image: ghcr.io/webysther/supabase-img:3.30.1
     container_name: supabase-imgproxy
-    restart: unless-stopped
-    networks:
-      - supabase-internal
     volumes:
-      - /data/docker/supabase/storage:/var/lib/storage
+      - storage:/var/lib/storage
 
   meta:
-    image: supabase/postgres-meta:v0.95.2
+    <<: *common
+    image: ghcr.io/webysther/supabase-meta:0.95.2
     container_name: supabase-meta
-    restart: unless-stopped
-    networks:
-      - supabase-internal
     depends_on:
       db:
         condition: service_healthy
       analytics:
         condition: service_healthy
-    environment:
-      PG_META_PORT: 8080
-      PG_META_DB_HOST: ${POSTGRES_HOST}
-      PG_META_DB_PORT: ${POSTGRES_PORT}
-      PG_META_DB_NAME: ${POSTGRES_DB}
-      PG_META_DB_USER: supabase_admin
-      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
-      CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
 
   functions:
+    <<: *common
     image: ghcr.io/webysther/supabase-functions:1.70.0
     container_name: supabase-edge-functions
-    restart: unless-stopped
     volumes:
-      - /data/docker/supabase/functions:/home/deno/functions
+      - functions:/home/deno/functions
     depends_on:
       analytics:
         condition: service_healthy
-    networks:
-      - supabase-internal
 
   analytics:
+    <<: *common
     image: ghcr.io/webysther/supabase-analytics:1.30.3
     container_name: supabase-analytics
-    restart: unless-stopped
-    networks:
-      - supabase-internal
     depends_on:
       db:
         condition: service_healthy
 
   db:
+    <<: *common
     image: ghcr.io/webysther/supabase-postgres:15
     container_name: supabase-db
-    restart: unless-stopped
     volumes:
-      - /data/docker/db:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
       - db-config:/etc/postgresql-custom
     depends_on:
       vector:
         condition: service_healthy
-    networks:
-      - supabase-internal
 
   vector:
+    <<: *common
     image: ghcr.io/webysther/supabase-vector:0.28.1
     container_name: supabase-vector
-    restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - supabase-internal
     security_opt:
       - "label=disable"
 
   supavisor:
+    <<: *common
     image: ghcr.io/webysther/supabase-supavisor:2.7.4
     container_name: supabase-pooler
-    restart: unless-stopped
     ports:
       - ${POSTGRES_PORT}:5432
       - 6543:6543
-    networks:
-      - supabase-internal
     depends_on:
       db:
         condition: service_healthy
@@ -169,7 +142,16 @@ services:
         condition: service_healthy
 
 volumes:
+  db:
+    name: db
   db-config:
+    name: db-config
+  functions:
+    name: functions
+  snippets:
+    name: snippets
+  storage:
+    name: storage
 
 networks:
   supabase:
