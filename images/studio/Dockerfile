@@ -5,7 +5,6 @@ RUN chmod +x /usr/local/bin/custom-entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/custom-entrypoint.sh"]
 
-HEALTHCHECK --start-period=10s --interval=10s --timeout=10s --retries=10 \
-    CMD "node -e \"fetch('http://studio:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})\""
+HEALTHCHECK NONE
 
 CMD ["node", "apps/studio/server.js"]
