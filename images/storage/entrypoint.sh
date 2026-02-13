@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-set -Eeuo pipefail
+#!/bin/sh
+set -e
 
 export DATABASE_URL="${DATABASE_URL:-postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}}"
 export SERVICE_KEY="${SERVICE_KEY:-$SERVICE_ROLE_KEY}"
