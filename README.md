@@ -3,6 +3,13 @@
 This repository makes it easy to run [Supabase with Docker](https://supabase.com/docs/guides/self-hosting/docker) by removing external dependencies and simplifying the configuration process, 
 without requiring shell access or additional setup steps. The project follows the same spirit of streamlined deployment popularized by [LinuxServer](https://www.linuxserver.io/our-images).
 
+## Contribution
+
+- Give a star
+- Consider a donation
+- [Ask to Supebase](https://github.com/orgs/supabase/discussions/39820) to provide a setup like this
+- Open an issue or Send a PR
+
 ## Major Problems Fixed
 
 - Extensive variable interpolation  
@@ -103,7 +110,3 @@ If a specific service fail, run only this service (eg. vector):
 
 - Merge some images in just one
 - Maybe build an AIO image
-
-## Contribution
-
-If this project was useful, consider donation and give a star.
