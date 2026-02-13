@@ -12,6 +12,8 @@ This repository make easy to deploy supabase with actions to build the services 
   - Variables isolated if not used in more than container
 - No need to clone repository
 - No need to copy files
+- Docker compose reduced from ~500 lines to <200 lines
+- Dotenv reduced to keep only required values
 
 ## Limitations
 
