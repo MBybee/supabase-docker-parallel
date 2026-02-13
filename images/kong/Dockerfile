@@ -7,4 +7,4 @@ ADD https://raw.githubusercontent.com/supabase/supabase/cdc1a93eb06d8670a1ccea4c
 
 COPY --chmod=755 entrypoint.sh /usr/local/bin/custom-entrypoint.sh
 
-ENTRYPOINT ["bash", "-c", "custom-entrypoint.sh && docker-entrypoint.sh kong docker-start"]
+ENTRYPOINT ["bash", "-c", "custom-entrypoint.sh && /docker-entrypoint.sh kong docker-start"]

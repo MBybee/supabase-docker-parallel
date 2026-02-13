@@ -20,4 +20,4 @@ export DB_NAME="${DB_NAME:-$POSTGRES_DB}"
 
 export API_JWT_SECRET="${API_JWT_SECRET:-$JWT_SECRET}"
 
-exec "${@}"
+exec /docker-entrypoint.sh "${@}"

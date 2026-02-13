@@ -16,4 +16,4 @@ export IMGPROXY_URL="${IMGPROXY_URL:-http://imgproxy:5001}"
 export SERVICE_KEY="${SERVICE_KEY:-$SERVICE_ROLE_KEY}"
 export PGRST_JWT_SECRET="${PGRST_JWT_SECRET:-$JWT_SECRET}"
 
-exec "${@}"
+exec docker-entrypoint.sh "${@}"

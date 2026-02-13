@@ -10,4 +10,4 @@ export PG_META_DB_PASSWORD="${PG_META_DB_PASSWORD:-$POSTGRES_PASSWORD}"
 
 export CRYPTO_KEY="${CRYPTO_KEY:-$PG_META_CRYPTO_KEY}"
 
-exec "${@}"
+exec docker-entrypoint.sh "${@}"
