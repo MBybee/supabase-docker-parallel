@@ -1,36 +1,37 @@
 # Supabase Docker
 
-This repository make easy to deploy supabase with actions to build the services with all values pre-configured.
+This repository makes it easy to run [Supabase with Docker](https://supabase.com/docs/guides/self-hosting/docker) by removing external dependencies and simplifying the configuration process, 
+without requiring shell access or additional setup steps. The project follows the same spirit of streamlined deployment popularized by [LinuxServer](https://www.linuxserver.io/our-images).
 
-## Major problems fixed
+## Major Problems Fixed
 
-- Variables interporlation, lots of it
-- All using entrypoint and healthcheck
-- Add files used in [setup](https://supabase.com/docs/guides/self-hosting/docker) in docker image
-- Security:
-  - All containers wrapper in internal network
-  - Variables isolated if not used in more than container
-- No need to clone repository
-- No need to copy files
-- Docker compose reduced from ~500 lines to <200 lines
-- Dotenv reduced to keep only required values
+- Extensive variable interpolation  
+- Fully managed via entrypoint and healthcheck  
+- Setup files embedded directly into the Docker image  
+- Security:  
+  - All containers isolated within an internal network  
+  - Variables restricted unless shared across multiple containers  
+- No need to clone the repository  
+- No need to copy files  
+- Docker Compose reduced from ~500 lines to fewer than 200  
+- `.env` file minimized to include only required values
 
 ## Limitations
 
-- Skipped version with S3
-- Skipped all other cloud features (GCP-ish, AWS-ish)
-- Only variables not commented by default
+- S3-based versions were skipped for now
+- Other cloud-specific features (GCP/AWS-style) were not included  
+- Only essential variables are left (the commented ENV in docker compose original are removed)
 
-## System requirements
+## System Requirements
 
-Just to boot all images the stack use almost 4GB.
-If you don't need all features, consider [Pocketbase](https://pocketbase.io/).
+Simply starting all images requires nearly 4 GB of RAM.  
+If you don’t need the full feature set, consider using [PocketBase](https://pocketbase.io/).
 
 ## Setup
 
 ### Compose
 
-To deploy only the `docker-compose.yml` and `.env` is necessary.
+To deploy, only the `docker-compose.yml` and `.env` is necessary.
 
 Let's generate the keys that will need:
 
