@@ -20,6 +20,10 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-kong:2.8.1
     container_name: supabase-kong
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
     networks:
       - supabase
       - supabase-internal
