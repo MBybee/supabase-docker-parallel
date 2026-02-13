@@ -19,6 +19,11 @@ This repository make easy to deploy supabase with actions to build the services 
 - Skipped all other cloud features (GCP-ish, AWS-ish)
 - Only variables not commented by default
 
+## System requirements
+
+Just to boot all images the stack use almost 4GB.
+If you don't need all features, consider [Pocketbase](https://pocketbase.io/).
+
 ## Setup
 
 ### Compose
