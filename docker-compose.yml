@@ -1,34 +1,55 @@
-name: supabase
+# Variables set to use EXT prefix for all external facing ports (to avoid collions)
+# The variables without EXT prefix are internal or global (passwords, etc)
+# Defaults are provided for some parameters, but mostly they come from .env.
+# DB image is provided from .env, just in case you wish to use the pg17 or custom
+# Ideally you don't need to edit this file at all 
+
+# Project name is parameterized to allow multiple instances running in parallel
+name: ${PROJECT_NAME}
 
 x-common: &common
-  networks: [ supabase-internal ]
+  # Network names parameterized
+  networks:
+    - internal
   env_file: .env
   restart: unless-stopped
+
 services:
   studio:
     <<: *common
     image: ghcr.io/webysther/supabase-studio:2026.01.27
-    container_name: supabase-studio
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-studio
+    # Studio display settings - parameterized for multi-instance clarity
+    environment:
+      STUDIO_DEFAULT_ORGANIZATION: ${STUDIO_DEFAULT_ORGANIZATION:-Default Organization}
+      STUDIO_DEFAULT_PROJECT: ${STUDIO_DEFAULT_PROJECT:-Default Project}
     depends_on:
       analytics:
         condition: service_healthy
     volumes:
+      # Volume references use static keys
       - snippets:/app/snippets
       - functions:/app/edge-functions
 
   kong:
     <<: *common
     image: ghcr.io/webysther/supabase-kong:2.8.1
-    container_name: supabase-kong
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-kong
+    environment:
+      DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
     ulimits:
       nofile:
         soft: 4096
         hard: 4096
     networks:
-      - supabase
-      - supabase-internal
+      # Network references use static keys
+      - default
+      - internal
     ports:
-      - 8000:8000/tcp
+      # External port parameterized - internal port stays 8000
+      - ${EXT_KONG_HTTP_PORT:-8000}:8000/tcp
     depends_on:
       analytics:
         condition: service_healthy
@@ -36,7 +57,8 @@ services:
   auth:
     <<: *common
     image: ghcr.io/webysther/supabase-auth:2.185.0
-    container_name: supabase-auth
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-auth
     depends_on:
       db:
         condition: service_healthy
@@ -46,7 +68,8 @@ services:
   rest:
     <<: *common
     image: ghcr.io/webysther/supabase-rest:14.3
-    container_name: supabase-rest
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-rest
     depends_on:
       db:
         condition: service_healthy
@@ -56,7 +79,8 @@ services:
   realtime:
     <<: *common
     image: ghcr.io/webysther/supabase-realtime:2.72.0
-    container_name: realtime-dev.supabase-realtime
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-realtime
     ulimits:
       nofile:
         soft: 10000
@@ -70,8 +94,10 @@ services:
   storage:
     <<: *common
     image: ghcr.io/webysther/supabase-storage:1.37.1
-    container_name: supabase-storage
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-storage
     volumes:
+      # Volume reference uses static key
       - storage:/var/lib/storage
     depends_on:
       db:
@@ -84,14 +110,17 @@ services:
   imgproxy:
     <<: *common
     image: ghcr.io/webysther/supabase-img:3.30.1
-    container_name: supabase-imgproxy
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-imgproxy
     volumes:
+      # Volume reference uses static key
       - storage:/var/lib/storage
 
   meta:
     <<: *common
     image: ghcr.io/webysther/supabase-meta:0.95.2
-    container_name: supabase-meta
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-meta
     depends_on:
       db:
         condition: service_healthy
@@ -101,8 +130,10 @@ services:
   functions:
     <<: *common
     image: ghcr.io/webysther/supabase-functions:1.70.0
-    container_name: supabase-edge-functions
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-edge-functions
     volumes:
+      # Volume reference uses static key
       - functions:/home/deno/functions
     depends_on:
       analytics:
@@ -111,18 +142,27 @@ services:
   analytics:
     <<: *common
     image: ghcr.io/webysther/supabase-analytics:1.30.3
-    container_name: supabase-analytics
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-analytics
     #ports:
-    #  - 4000:4000
+    # Optional analytics port - uncomment and parameterize if needed
+    #  - ${EXT_ANALYTICS_PORT}:4000
     depends_on:
       db:
         condition: service_healthy
 
   db:
     <<: *common
-    image: ghcr.io/webysther/supabase-postgres:15.8.1
-    container_name: supabase-db
+    # DB image is parameterized to allow you to use other images
+    image: ${POSTGRES_IMAGE}
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME}-db
+    environment:
+      # Database settings - internal port is always 5432
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
     volumes:
+      # Volume references use static keys
       - db:/var/lib/postgresql/data
       - db-config:/etc/postgresql-custom
     depends_on:
@@ -132,7 +172,8 @@ services:
   vector:
     <<: *common
     image: ghcr.io/webysther/supabase-vector:0.28.1
-    container_name: supabase-vector
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME:-supabase}-vector
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     security_opt:
@@ -141,10 +182,12 @@ services:
   supavisor:
     <<: *common
     image: ghcr.io/webysther/supabase-supavisor:2.7.4
-    container_name: supabase-pooler
+    # Container name parameterized to avoid collision
+    container_name: ${PROJECT_NAME:-supabase}-pooler
     ports:
-      - ${POSTGRES_PORT}:5432
-      - 6543:6543
+      # External ports parameterized - internal ports stay 5432/6543
+      - ${EXT_POSTGRES_PORT:-5432}:5432
+      - ${EXT_POOLER_PORT:-6543}:6543
     depends_on:
       db:
         condition: service_healthy
@@ -152,19 +195,22 @@ services:
         condition: service_healthy
 
 volumes:
+  # Static keys with parameterized names to avoid collision
   db:
-    name: db
+    name: ${PROJECT_NAME:-supabase}-db
   db-config:
-    name: db-config
+    name: ${PROJECT_NAME:-supabase}-db-config
   functions:
-    name: functions
+    name: ${PROJECT_NAME:-supabase}-functions
   snippets:
-    name: snippets
+    name: ${PROJECT_NAME:-supabase}-snippets
   storage:
-    name: storage
+    name: ${PROJECT_NAME:-supabase}-storage
 
 networks:
-  supabase:
-    name: supabase
-  supabase-internal:
-    name: supabase-internal
+  # Static keys with parameterized names to avoid collision
+  default:
+    name: ${PROJECT_NAME:-supabase}
+  internal:
+    name: ${PROJECT_NAME:-supabase}-internal
+
