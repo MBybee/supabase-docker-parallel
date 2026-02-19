@@ -173,7 +173,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-vector:0.28.1
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME:-supabase}-vector
+    container_name: ${PROJECT_NAME}-vector
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     security_opt:
@@ -183,7 +183,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-supavisor:2.7.4
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME:-supabase}-pooler
+    container_name: ${PROJECT_NAME}-pooler
     ports:
       # External ports parameterized - internal ports stay 5432/6543
       - ${EXT_POSTGRES_PORT:-5432}:5432
@@ -197,20 +197,20 @@ services:
 volumes:
   # Static keys with parameterized names to avoid collision
   db:
-    name: ${PROJECT_NAME:-supabase}-db
+    name: ${PROJECT_NAME}-db
   db-config:
-    name: ${PROJECT_NAME:-supabase}-db-config
+    name: ${PROJECT_NAME}-db-config
   functions:
-    name: ${PROJECT_NAME:-supabase}-functions
+    name: ${PROJECT_NAME}-functions
   snippets:
-    name: ${PROJECT_NAME:-supabase}-snippets
+    name: ${PROJECT_NAME}-snippets
   storage:
-    name: ${PROJECT_NAME:-supabase}-storage
+    name: ${PROJECT_NAME}-storage
 
 networks:
   # Static keys with parameterized names to avoid collision
   default:
-    name: ${PROJECT_NAME:-supabase}
+    name: ${PROJECT_NAME}
   internal:
-    name: ${PROJECT_NAME:-supabase}-internal
+    name: ${PROJECT_NAME}-internal
 
