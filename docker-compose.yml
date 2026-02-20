@@ -5,7 +5,7 @@
 # Ideally you don't need to edit this file at all 
 
 # Project name is parameterized to allow multiple instances running in parallel
-name: ${PROJECT_NAME}
+name: ${COMPOSE_PROJECT_NAME}
 
 x-common: &common
   # Network names parameterized
@@ -19,7 +19,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-studio:2026.01.27
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-studio
+    container_name: ${COMPOSE_PROJECT_NAME}-studio
     # Studio display settings - parameterized for multi-instance clarity
     environment:
       STUDIO_DEFAULT_ORGANIZATION: ${STUDIO_DEFAULT_ORGANIZATION:-Default Organization}
@@ -36,7 +36,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-kong:2.8.1
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-kong
+    container_name: ${COMPOSE_PROJECT_NAME}-kong
     environment:
       DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
     ulimits:
@@ -58,7 +58,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-auth:2.185.0
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-auth
+    container_name: ${COMPOSE_PROJECT_NAME}-auth
     depends_on:
       db:
         condition: service_healthy
@@ -69,7 +69,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-rest:14.3
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-rest
+    container_name: ${COMPOSE_PROJECT_NAME}-rest
     depends_on:
       db:
         condition: service_healthy
@@ -80,7 +80,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-realtime:2.72.0
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-realtime
+    container_name: ${COMPOSE_PROJECT_NAME}-realtime
     ulimits:
       nofile:
         soft: 10000
@@ -95,7 +95,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-storage:1.37.1
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-storage
+    container_name: ${COMPOSE_PROJECT_NAME}-storage
     volumes:
       # Volume reference uses static key
       - storage:/var/lib/storage
@@ -111,7 +111,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-img:3.30.1
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-imgproxy
+    container_name: ${COMPOSE_PROJECT_NAME}-imgproxy
     volumes:
       # Volume reference uses static key
       - storage:/var/lib/storage
@@ -120,7 +120,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-meta:0.95.2
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-meta
+    container_name: ${COMPOSE_PROJECT_NAME}-meta
     depends_on:
       db:
         condition: service_healthy
@@ -131,7 +131,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-functions:1.70.0
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-edge-functions
+    container_name: ${COMPOSE_PROJECT_NAME}-edge-functions
     volumes:
       # Volume reference uses static key
       - functions:/home/deno/functions
@@ -143,7 +143,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-analytics:1.30.3
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-analytics
+    container_name: ${COMPOSE_PROJECT_NAME}-analytics
     #ports:
     # Optional analytics port - uncomment and parameterize if needed
     #  - ${EXT_ANALYTICS_PORT}:4000
@@ -156,7 +156,7 @@ services:
     # DB image is parameterized to allow you to use other images
     image: ${POSTGRES_IMAGE}
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-db
+    container_name: ${COMPOSE_PROJECT_NAME}-db
     environment:
       # Database settings - internal port is always 5432
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -173,7 +173,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-vector:0.28.1
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-vector
+    container_name: ${COMPOSE_PROJECT_NAME}-vector
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     security_opt:
@@ -183,7 +183,7 @@ services:
     <<: *common
     image: ghcr.io/webysther/supabase-supavisor:2.7.4
     # Container name parameterized to avoid collision
-    container_name: ${PROJECT_NAME}-pooler
+    container_name: ${COMPOSE_PROJECT_NAME}-pooler
     ports:
       # External ports parameterized - internal ports stay 5432/6543
       - ${EXT_POSTGRES_PORT:-5432}:5432
@@ -197,20 +197,20 @@ services:
 volumes:
   # Static keys with parameterized names to avoid collision
   db:
-    name: ${PROJECT_NAME}-db
+    name: ${COMPOSE_PROJECT_NAME}-db
   db-config:
-    name: ${PROJECT_NAME}-db-config
+    name: ${COMPOSE_PROJECT_NAME}-db-config
   functions:
-    name: ${PROJECT_NAME}-functions
+    name: ${COMPOSE_PROJECT_NAME}-functions
   snippets:
-    name: ${PROJECT_NAME}-snippets
+    name: ${COMPOSE_PROJECT_NAME}-snippets
   storage:
-    name: ${PROJECT_NAME}-storage
+    name: ${COMPOSE_PROJECT_NAME}-storage
 
 networks:
   # Static keys with parameterized names to avoid collision
   default:
-    name: ${PROJECT_NAME}
+    name: ${COMPOSE_PROJECT_NAME}
   internal:
-    name: ${PROJECT_NAME}-internal
+    name: ${COMPOSE_PROJECT_NAME}-internal
 

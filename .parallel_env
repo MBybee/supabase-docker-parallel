@@ -1,0 +1,65 @@
+############
+# Secrets
+############
+
+# Generate using `docker run ghcr.io/webysther/supabase-keys` 
+
+ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzcxNTM0MjIwLCJleHAiOjIwODY4OTQyMjB9.neZv8FlGAOLRT7qMw5q2xNSMIbjQYw7SOfp-kxSROkI
+SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3NzE1MzQyMjAsImV4cCI6MjA4Njg5NDIyMH0.oQe2gDDnkkUKT7lpvQ-yot1A1ovgHK23cgX08W-C8j8
+
+JWT_SECRET=N5omM9R56uNNpCqSdMqJNXdP9I+mrkEUVltXfeYD
+SECRET_KEY_BASE=dEUfbm6cf4Y5wjti40YseTOmHiKgsKnj1Huv5Dix63yh+gHJ/UsoUdtM3AOx9hGk
+VAULT_ENC_KEY=99881ab2ee6fd6b117c6515d02624707
+PG_META_CRYPTO_KEY=//zOggTLvpboywx9EJWfcinlIZqap7AF
+LOGFLARE_PUBLIC_ACCESS_TOKEN=OL4nmMrv8wxPK/hkbjxI9Z8pXbbCfid3
+LOGFLARE_PRIVATE_ACCESS_TOKEN=GLL0WlbjsPUd4T8qJ+qk/67vX4A0liMO
+POOLER_TENANT_ID=5f67c0171f990b4a
+DB_ENC_KEY=da05662fef3735c8
+
+POSTGRES_PASSWORD=93ffce1752c16350e89827de6abec9de
+DASHBOARD_PASSWORD=cdfd135122a44509e82e9ad856769176
+
+
+
+############
+# Parallel docker config follows - this version of the file would be .env for a second supabase in a new directory
+############
+
+############
+# DB and Service ports need to be unique
+############
+EXT_POSTGRES_PORT=5433
+EXT_POOLER_PORT=6544
+EXT_KONG_HTTP_PORT=8001
+
+############
+# Project Info - no spaces.
+# This seperates the containers/volumes/networks
+# Project name MUST be unique
+############
+
+COMPOSE_PROJECT_NAME=parallel_project_1
+DASHBOARD_USERNAME=supabase
+
+############
+# Project and Org Info - spaces are ok
+############
+STUDIO_DEFAULT_ORGANIZATION=Your Organization
+STUDIO_DEFAULT_PROJECT=Default Project 2
+
+############
+# DB Info - should be stable
+############
+POSTGRES_HOST=db
+POSTGRES_DB=postgres
+#POSTGRES_IMAGE=pgvector/pgvector:pg17
+POSTGRES_IMAGE=ghcr.io/webysther/supabase-postgres:15.8.1
+
+############
+# Internal Connection Settings (always standard ports)
+############
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+POOLER_PORT=6543
+KONG_HTTP_PORT=8000
+
